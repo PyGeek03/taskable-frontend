@@ -1,4 +1,5 @@
-# taskable
+# Taskable
+A modern task roster. Made with Nuxt.js and Vuetify
 
 ## Build Setup
 

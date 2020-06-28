@@ -3,9 +3,8 @@
     <v-data-table
       :headers="headers"
       :items="team"
-      item-key="name"
+      item-key="id"
       :search="search"
-      show-group-by
       :loading="loading"
       loading-text="Loading all users..."
       sort-by="due_date"
@@ -26,7 +25,7 @@
         </v-toolbar>
       </template>
       <template v-slot:item.is_manager="{ item }">
-        <v-checkbox disabled v-model="item.is_manager"></v-checkbox>
+        <v-checkbox :disabled="item.id === $auth.user.id" @change="updatePrivilege(item)" v-model="item.is_manager"></v-checkbox>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="reload">Reset</v-btn>
@@ -36,6 +35,8 @@
 </template>
 
 <script>
+import { team } from "~/assets/config";
+
 export default {
   data: () => ({
     title: "All Users",
@@ -43,14 +44,13 @@ export default {
     headers: [
       {
         text: "Name",
-        value: "name",
-        groupable: false
+        value: "name"
       },
-      { text: "Role", value: "role" },
       { text: "Manager", value: "is_manager" },
-      { text: "Email", value: "email", groupable: false },
-      { text: "Mobile", value: "mobile_phone", groupable: false },
-      { text: "Birthday", value: "birthday", groupable: false }
+      { text: "Role", value: "role" },
+      { text: "Email", value: "email" },
+      { text: "Mobile", value: "mobile_phone" },
+      { text: "Birthday", value: "birthday" }
     ],
     team: []
   }),
@@ -71,6 +71,14 @@ export default {
     };
   },
 
-  methods: {}
+  methods: {
+    async updatePrivilege(user) {
+      await this.$axios.put("/user/update_privilege", {
+        id: user.id,
+        privilege: user.is_manager
+      });
+      await this.$auth.fetchUser();
+    }
+  }
 };
 </script>

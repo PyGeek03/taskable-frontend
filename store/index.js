@@ -1,0 +1,1 @@
+// Just an empty file to initialize the Vuex store for @nuxt/auth
